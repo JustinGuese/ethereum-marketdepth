@@ -54,7 +54,7 @@ def oneLoop(symbol: str = "ETHTUSD"):
 
 if __name__ == "__main__":
     symbol = environ.get("SYMBOL", "ETHTUSD")
-    logevery = int(environ.get("LOGEVERY", 10))
+    logevery = int(environ.get("LOGEVERY", 100))
     append = fileExistsCheck(symbol)
     loopcnt = 0
     startTime = pd.Timestamp.now()
