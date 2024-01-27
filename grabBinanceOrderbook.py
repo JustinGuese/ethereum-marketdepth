@@ -38,10 +38,27 @@ def oneLoop(symbol: str = "ETHTUSD"):
     # Calculate spread and spread percentage while aggregating
     price_summary = (
         price_summary.groupby("side")
-        .agg({"price": ["min", "max", "mean"], "quantity": "count"})
+        .agg(
+            {
+                "price": ["min", "max", "mean", "median"],
+                "quantity": ["count", "sum", "min", "max", "mean", "median"],
+            }
+        )
         .reset_index()
     )
-    price_summary.columns = ["side", "min", "max", "mean", "count"]
+    price_summary.columns = [
+        "side",
+        "min",
+        "max",
+        "mean",
+        "median",
+        "quantity_count",
+        "quantity_sum",
+        "quantity_min",
+        "quantity_max",
+        "quantity_mean",
+        "quantity_median",
+    ]
     price_summary["spread"] = price_summary["max"] - price_summary["min"]
     price_summary["spread_pct"] = price_summary["spread"] / price_summary["mean"]
     price_summary["timestamp"] = pd.Timestamp.now()
