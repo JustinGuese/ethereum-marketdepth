@@ -61,6 +61,7 @@ if __name__ == "__main__":
     logevery = int(environ.get("LOGEVERY", 100))
     append = fileExistsCheck(symbol)
     loopcnt = 0
+    startTime = pd.Timestamp.now()
     while True:
         try:
             price_summary = oneLoop(symbol)
@@ -69,7 +70,11 @@ if __name__ == "__main__":
                 append = True  # after first write, append to parquet
             loopcnt += 1
             if loopcnt % logevery == 0:
-                print(f"{price_summary.index[-1]}: Loop nr {loopcnt}.  ")
+                runningSince = pd.Timestamp.now() - startTime
+                iterationsPerSecond = loopcnt / runningSince.total_seconds()
+                print(
+                    f"{price_summary.index[-1]}: Loop nr {loopcnt}. doing {iterationsPerSecond:.2f} iterations per second"
+                )
         except KeyboardInterrupt:
             print("KeyboardInterrupt")
             break
