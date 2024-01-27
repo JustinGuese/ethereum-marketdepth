@@ -59,8 +59,6 @@ def oneLoop(symbol: str = "ETHTUSD"):
         "quantity_mean",
         "quantity_median",
     ]
-    price_summary["spread"] = price_summary["max"] - price_summary["min"]
-    price_summary["spread_pct"] = price_summary["spread"] / price_summary["mean"]
     price_summary["timestamp"] = pd.Timestamp.now()
     price_summary["symbol"] = symbol
     price_summary["month"] = price_summary["timestamp"].dt.month
