@@ -1,0 +1,10 @@
+version: "3"
+services:
+  orderbookgetter:
+    image: guestros/binance-orderbook-getter:latest
+    build: .
+    environment: 
+      - SYMBOL=ETHTUSD
+    volumes:
+      - ./data:/app/data/
+    restart: on-failure
