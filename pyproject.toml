@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "ethereum-marketdepth"
+version = "0.1.0"
+description = ""
+authors = ["Justin Guese <guese.justin@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+requests = "^2.31.0"
+pandas = "^2.2.0"
+fastparquet = "^2023.10.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
