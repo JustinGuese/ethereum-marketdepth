@@ -62,14 +62,18 @@ if __name__ == "__main__":
     append = fileExistsCheck(symbol)
     loopcnt = 0
     startTime = pd.Timestamp.now()
+    dfstore = []
     while True:
         try:
             price_summary = oneLoop(symbol)
-            saveToParquet(price_summary, symbol, append=append)
-            if not append:
-                append = True  # after first write, append to parquet
+            dfstore.append(price_summary)
             loopcnt += 1
             if loopcnt % logevery == 0:
+                price_summary = pd.concat(dfstore)
+                dfstore = []
+                saveToParquet(price_summary, symbol, append=append)
+                if not append:
+                    append = True  # after first write, append to parquet
                 runningSince = pd.Timestamp.now() - startTime
                 iterationsPerSecond = loopcnt / runningSince.total_seconds()
                 print(
