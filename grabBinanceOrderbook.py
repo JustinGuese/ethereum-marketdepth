@@ -1,22 +1,18 @@
-from os import environ
+from os import environ, path
 
 import pandas as pd
 import requests
 
 
 def fileExistsCheck(filename):
-    try:
-        pd.read_parquet("data/" + filename + ".parquet.gzip")
-        return True
-    except FileNotFoundError:
-        return False
+    return path.exists("data/" + filename + ".parquet.gzip")
 
 
 def saveToParquet(df, filename, append=True):
     df.to_parquet(
         "data/" + filename + ".parquet.gzip",
         compression="gzip",
-        partition_cols=["side", "month", "year"],
+        partition_cols=["side", "year", "month"],
         append=append,
     )
 
@@ -58,7 +54,7 @@ def oneLoop(symbol: str = "ETHTUSD"):
 
 if __name__ == "__main__":
     symbol = environ.get("SYMBOL", "ETHTUSD")
-    logevery = int(environ.get("LOGEVERY", 100))
+    logevery = int(environ.get("LOGEVERY", 10))
     append = fileExistsCheck(symbol)
     loopcnt = 0
     startTime = pd.Timestamp.now()
