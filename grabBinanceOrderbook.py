@@ -2,19 +2,9 @@ from os import environ, path
 
 import pandas as pd
 import requests
+from sqlalchemy import create_engine
 
-
-def fileExistsCheck(filename):
-    return path.exists("data/" + filename + ".parquet.gzip")
-
-
-def saveToParquet(df, filename, append=True):
-    df.to_parquet(
-        "data/" + filename + ".parquet.gzip",
-        compression="gzip",
-        partition_cols=["side", "year", "month"],
-        append=append,
-    )
+engine = create_engine("postgresql+psycopg2://" + environ["PSQL_URI"])
 
 
 def oneLoop(symbol: str = "ETHTUSD"):
@@ -70,26 +60,13 @@ def oneLoop(symbol: str = "ETHTUSD"):
 if __name__ == "__main__":
     symbol = environ.get("SYMBOL", "ETHTUSD")
     logevery = int(environ.get("LOGEVERY", 100))
-    append = fileExistsCheck(symbol)
     loopcnt = 0
     startTime = pd.Timestamp.now()
-    dfstore = []
     while True:
         try:
             price_summary = oneLoop(symbol)
-            dfstore.append(price_summary)
-            loopcnt += 1
-            if loopcnt % logevery == 0:
-                price_summary = pd.concat(dfstore)
-                dfstore = []
-                saveToParquet(price_summary, symbol, append=append)
-                if not append:
-                    append = True  # after first write, append to parquet
-                runningSince = pd.Timestamp.now() - startTime
-                iterationsPerSecond = loopcnt / runningSince.total_seconds()
-                print(
-                    f"{price_summary.index[-1]}: Loop nr {loopcnt}. doing {iterationsPerSecond:.2f} iterations per second"
-                )
+            price_summary.to_sql("binance_orderbook", engine, if_exists="append")
+
         except KeyboardInterrupt:
             print("KeyboardInterrupt")
             break

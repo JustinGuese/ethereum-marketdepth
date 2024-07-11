@@ -1,10 +1,21 @@
 version: "3"
 services:
-  orderbookgetter:
-    image: guestros/binance-orderbook-getter:latest
-    build: .
-    environment: 
-      - SYMBOL=ETHTUSD
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
     volumes:
-      - ./data:/app/data/
-    restart: on-failure
+      - ethmktpg:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres12
+    ports:
+      - "5432:5432"
+  
+  # orderbookgetter:
+  #   image: guestros/binance-orderbook-getter:latest
+  #   build: .
+  #   environment: 
+  #     - SYMBOL=ETHTUSD
+  #   restart: on-failure
+  #   depends_on:
+  #     - timescaledb
+volumes:
+  ethmktpg:
